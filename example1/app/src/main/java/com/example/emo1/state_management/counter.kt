@@ -22,8 +22,7 @@ fun Counter(modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
 
-
-    ) {
+   ) {
         // tämä onClick-funktio kasvattaa napin klikillä
         // integerin arvoa ja logittaa konsoliin uuden arvon
         // tagilla juhanicounter

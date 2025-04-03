@@ -1,4 +1,4 @@
-package com.example.emo1
+package com.example.numberguessgame
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,21 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.emo1.state_management.Counter
-import com.example.emo1.state_management.StateHoistingDemo
-import com.example.emo1.ui.theme.Emo1Theme
+import com.example.numberguessgame.ui.theme.NumberGuessGameTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Emo1Theme {
-                StateHoistingDemo()
+            NumberGuessGameTheme {
+                NumberGuessScreenRoot()
+                }
             }
         }
     }
-}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -33,13 +31,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
-
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    Emo1Theme {
+    NumberGuessGameTheme {
         Greeting("Android")
     }
 }
