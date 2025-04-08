@@ -22,11 +22,22 @@ fun NumberGuessScreenRoot(modifier: Modifier = Modifier) {
    val vm = viewModel<NumberGuessScreenViewModel>()
    val state by vm.state.collectAsStateWithLifecycle()
 
-   NumberGuessScreen(state=state, onValueChange = {updatedText -> vm.updateNuberText(updatedText)}, onGuess = {vm.guess()})
+   NumberGuessScreen(
+      state = state,
+      onValueChange = { updatedText -> vm.updateNuberText(updatedText) },
+      onGuess = { vm.guess() },
+      onStart ={ vm.startNewGame() }
+   )
 }
 
 @Composable
-fun NumberGuessScreen(modifier: Modifier = Modifier, state: NumberGuessState, onValueChange: (String)->Unit,onGuess: () -> Unit) {
+fun NumberGuessScreen(
+   modifier: Modifier = Modifier,
+   state: NumberGuessState,
+   onValueChange: (String) -> Unit,
+   onGuess: () -> Unit,
+   onStart: () -> Unit
+) {
    Scaffold() {  paddingValues ->
       Column(modifier = Modifier.fillMaxSize().padding(paddingValues),
          verticalArrangement =  Arrangement.Center,
@@ -41,7 +52,11 @@ fun NumberGuessScreen(modifier: Modifier = Modifier, state: NumberGuessState, on
             onClick = onGuess){
             Text("Arvaa")
          }
+         TextButton(onClick = onStart){
+            Text("Aloita uusi peli")
+         }
       }
+
 
    }
 }

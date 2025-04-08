@@ -37,5 +37,11 @@ class NumberGuessScreenViewModel : ViewModel(){
             }
         }
     }
+    fun startNewGame(){
+        randomNumber = Random.nextInt(1,101)
+        _state.update { currentState ->
+            currentState.copy(number = "", guessText = "")
+        }
+    }
 
 }
