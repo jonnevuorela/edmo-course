@@ -6,4 +6,8 @@ class UserDataServiceImpl(private val api: DataApi) : UserDataService {
     override suspend fun getUsers(): List<UserDto> {
         return api.getUsers()
     }
+
+    override suspend fun getUserById(id: Int): UserDto? {
+        return api.getUserById(id)
+    }
 }

@@ -11,3 +11,9 @@ data class UserState(
     // jos haussa tulee virhe, näytetään se käyttäjälle
     val error: String? = null
 )
+
+data class UserItemState(
+    val loading: Boolean = false,
+    val user: UserDto? = null,
+    val error: String? = null
+)
