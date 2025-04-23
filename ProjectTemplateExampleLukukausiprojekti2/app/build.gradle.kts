@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-
+implementation("io.coil-kt:coil-compose:2.5.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
     // Retrofit
