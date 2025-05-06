@@ -38,12 +38,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.lopputehtava.models.RestaurantReviewsState
-import com.example.lopputehtava.models.RestaurantWithReviewDto
+import com.example.lopputehtava.models.RestaurantWithReviewsDto
 
 @Composable
 fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
-    val productsWithReviews = listOf(
-        RestaurantWithReviewDto(
+    val restaurantsWithReviews = listOf(
+        RestaurantWithReviewsDto(
             id = 1,
             name = "Ravintola",
             cuisine = "Ruokaa",
@@ -53,7 +53,7 @@ fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
             rating = 5f,
             reviewCount = 1000,
         ),
-        RestaurantWithReviewDto(
+        RestaurantWithReviewsDto(
             id = 2,
             name = "Toinen Ravintola",
             cuisine = "Eri ruokaa",
@@ -63,7 +63,7 @@ fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
             rating = 4.5f,
             reviewCount = 100,
         ),
-        RestaurantWithReviewDto(
+        RestaurantWithReviewsDto(
             id = 3,
             name = "Äteritsiputeritsipuolilautatsibaari",
             cuisine = "Väärää ruokaa",
@@ -75,7 +75,7 @@ fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
         )
     )
     val _state = RestaurantReviewsState(
-        restaurantWithReviewDto = productsWithReviews
+        restaurantWithReviewsDto = restaurantsWithReviews
     )
     RestaurantsWithReviewsScreen(state = _state)
 
@@ -129,8 +129,8 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    items(state.restaurantWithReviewDto) { product ->
-                        RestaurantItem(restaurant = product)
+                    items(state.restaurantWithReviewsDto) { restaurant ->
+                        RestaurantItem(restaurant = restaurant)
                     }
                 }
             }
@@ -139,7 +139,7 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
 }
 
 @Composable
-fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewDto) {
+fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -209,7 +209,7 @@ fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithRevi
     }
 }
 @Composable
-fun RatingBar(modifier: Modifier = Modifier, rating: Float, reviewCount: Int) {
+fun RatingBar(modifier: Modifier = Modifier, rating: Float, reviewCount: Int?) {
     val filledStars = rating.toInt()
     val hasHalfStar = rating - filledStars >= 0.5
     val emptyStars = 5 - filledStars - if (hasHalfStar) 1 else 0
@@ -238,11 +238,16 @@ fun RatingBar(modifier: Modifier = Modifier, rating: Float, reviewCount: Int) {
             fontWeight = FontWeight.W400
             )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text ="($reviewCount)",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.Gray
+        if(reviewCount != null){
+            Text(
+                text ="($reviewCount)",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Gray
             )
-    }
+        }else {
+
+        }
+
+}
 }
