@@ -31,13 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.lopputehtava.models.GetRestaurantResponseDto
 import com.example.lopputehtava.models.RestaurantWithReviewsDto
 import com.example.lopputehtava.models.ReviewDto
 import com.example.lopputehtava.models.ReviewsState
 
 @Composable
-fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int) {
+fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navController: NavController, onNavigate: (Int) -> Unit) {
     val reviewsOfRestaurant = listOf(
         ReviewDto(
             id = 1,
@@ -104,13 +105,18 @@ fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int) {
         restaurant = response
     )
 
-        ReviewsOfRestaurantScreen(restaurant = selectedRestaurant, state = _state)
+        ReviewsOfRestaurantScreen(
+            restaurant = selectedRestaurant,
+            state = _state,
+            navController = navController,
+            onNavigate = onNavigate
+        )
 
 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto, state: ReviewsState) {
+fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto, state: ReviewsState, navController: NavController, onNavigate: (Int) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -118,7 +124,7 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                     Text(text = restaurant.name)
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick= { navController.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Navigate back")
                     }
                 }
@@ -158,7 +164,7 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                         .padding(paddingValues)
                 ) {
                     item {
-                        RestaurantItem(restaurant = restaurant)
+                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate)
                     }
                     items(state.restaurant?.reviews ?: emptyList()){ review ->
                         ReviewItem(review = review)

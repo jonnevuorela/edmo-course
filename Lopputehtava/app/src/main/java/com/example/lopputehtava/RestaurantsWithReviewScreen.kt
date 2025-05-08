@@ -1,5 +1,6 @@
 package com.example.lopputehtava
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,7 @@ import com.example.lopputehtava.models.RestaurantReviewsState
 import com.example.lopputehtava.models.RestaurantWithReviewsDto
 
 @Composable
-fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
+fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier, onNavigate: (Int) -> Unit) {
     val restaurantsWithReviews = listOf(
         RestaurantWithReviewsDto(
             id = 1,
@@ -77,12 +78,12 @@ fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier) {
     val _state = RestaurantReviewsState(
         restaurantWithReviewsDto = restaurantsWithReviews
     )
-    RestaurantsWithReviewsScreen(state = _state)
+    RestaurantsWithReviewsScreen(state = _state, onNavigate = onNavigate)
 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: RestaurantReviewsState) {
+fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: RestaurantReviewsState, onNavigate: (Int) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -129,8 +130,10 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    items(state.restaurantWithReviewsDto) { restaurant ->
-                        RestaurantItem(restaurant = restaurant)
+                    items(state.restaurantWithReviewsDto, key = { restaurant ->
+                        restaurant.id
+                    }) {restaurant ->
+                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate)
                     }
                 }
             }
@@ -139,11 +142,14 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
 }
 
 @Composable
-fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto) {
+fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto, onNavigate: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable{
+                onNavigate(restaurant.id)
+                      },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ){
         Row(modifier = Modifier
