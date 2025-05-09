@@ -23,5 +23,5 @@ data class GetRestaurantResponseDto(
     val id: Int,
     val name: String,
 
-    val reviews: List<ReviewDto> = emptyList()
+    val review: List<ReviewDto>
 )

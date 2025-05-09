@@ -3,7 +3,7 @@ package com.example.lopputehtava.models
 
 import com.google.gson.annotations.SerializedName
 
-data class RestaurantWithReviewsDto(
+data class RestaurantWithReviewDto(
     val id: Int,
     val name: String,
     val cuisine: String,
@@ -21,5 +21,5 @@ data class RestaurantWithReviewsDto(
 data class RestaurantReviewsState(
     val loading: Boolean = false,
     val error: String? = null,
-    val restaurantWithReviewsDto: List<RestaurantWithReviewsDto> = emptyList(),
+    val restaurantWithReview : List<RestaurantWithReviewDto> = emptyList(),
 )

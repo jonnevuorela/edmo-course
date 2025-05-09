@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -37,53 +36,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import androidx.compose.runtime.getValue
 import com.example.lopputehtava.models.RestaurantReviewsState
-import com.example.lopputehtava.models.RestaurantWithReviewsDto
-
+import com.example.lopputehtava.models.RestaurantWithReviewDto
+import com.example.lopputehtava.vm.RestaurantViewModel
+import androidx.compose.foundation.lazy.items
 @Composable
-fun RestaurantsWithReviewsScreenRoot(modifier: Modifier = Modifier, onNavigate: (Int) -> Unit) {
-    val restaurantsWithReviews = listOf(
-        RestaurantWithReviewsDto(
-            id = 1,
-            name = "Ravintola",
-            cuisine = "Ruokaa",
-            priceRange = "$$$",
-            address = "Katu 123, Tuntsa",
-            openStatus = "Aina auki",
-            rating = 5f,
-            reviewCount = 1000,
-        ),
-        RestaurantWithReviewsDto(
-            id = 2,
-            name = "Toinen Ravintola",
-            cuisine = "Eri ruokaa",
-            priceRange = "$$",
-            address = "Kuja 777, Tulppio",
-            openStatus = "Suljetaan kohta",
-            rating = 4.5f,
-            reviewCount = 100,
-        ),
-        RestaurantWithReviewsDto(
-            id = 3,
-            name = "Äteritsiputeritsipuolilautatsibaari",
-            cuisine = "Väärää ruokaa",
-            priceRange = "$",
-            address = "Polku 2, Värriö",
-            openStatus = "Suljettu pysyvästi",
-            rating = 1f,
-            reviewCount = 1,
-        )
-    )
-    val _state = RestaurantReviewsState(
-        restaurantWithReviewsDto = restaurantsWithReviews
-    )
-    RestaurantsWithReviewsScreen(state = _state, onNavigate = onNavigate)
+fun RestaurantsWithReviewsScreenRoot(
+    modifier: Modifier = Modifier,
+    onNavigate: (Int) -> Unit,
+    viewModel: RestaurantViewModel
+) {
+
+    val state by viewModel.restaurantReviewsState.collectAsStateWithLifecycle()
+    RestaurantsWithReviewsScreen(state = state, onNavigate = onNavigate)
 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: RestaurantReviewsState, onNavigate: (Int) -> Unit) {
+fun RestaurantsWithReviewsScreen(
+    modifier: Modifier = Modifier,
+    state: RestaurantReviewsState,
+    onNavigate: (Int) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -109,32 +86,31 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
                     CircularProgressIndicator()
                 }
             }
-            state.error != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column {
-                        Text(state.error)
-                        Button(onClick = {}) {
-                            Text("Retry")
+            else -> {
+                state.error?.let { err ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues), contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(err)
+                            Button(onClick = {}) {
+                                Text("Retry")
+                            }
                         }
                     }
-                }
-            }
-            else -> {
-                LazyColumn(
+                } ?: LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    items(state.restaurantWithReviewsDto, key = { restaurant ->
+                    items(state.restaurantWithReview, key = { restaurant ->
                         restaurant.id
-                    }) {restaurant ->
-                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate)
+                    }) { restaurant ->
+                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate, inReviews = false)
                     }
+
                 }
             }
         }
@@ -142,14 +118,16 @@ fun RestaurantsWithReviewsScreen(modifier: Modifier = Modifier, state: Restauran
 }
 
 @Composable
-fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto, onNavigate: (Int) -> Unit) {
+fun RestaurantItem(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewDto, onNavigate: (Int) -> Unit, inReviews: Boolean) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .clickable{
-                onNavigate(restaurant.id)
-                      },
+                if(!inReviews){
+                    onNavigate(restaurant.id)
+                }else{}
+                },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ){
         Row(modifier = Modifier

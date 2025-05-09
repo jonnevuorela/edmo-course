@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.lopputehtava.models.GetRestaurantResponseDto
-import com.example.lopputehtava.models.RestaurantWithReviewsDto
+import com.example.lopputehtava.models.RestaurantWithReviewDto
 import com.example.lopputehtava.models.ReviewDto
 import com.example.lopputehtava.models.ReviewsState
 
@@ -64,7 +64,7 @@ fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navCon
     )
 
     val restaurantsWithReviews = listOf(
-        RestaurantWithReviewsDto(
+        RestaurantWithReviewDto(
             id = 1,
             name = "Ravintola",
             cuisine = "Ruokaa",
@@ -74,7 +74,7 @@ fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navCon
             rating = 5f,
             reviewCount = 1000,
         ),
-        RestaurantWithReviewsDto(
+        RestaurantWithReviewDto(
             id = 2,
             name = "Toinen Ravintola",
             cuisine = "Eri ruokaa",
@@ -84,7 +84,7 @@ fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navCon
             rating = 4.5f,
             reviewCount = 100,
         ),
-        RestaurantWithReviewsDto(
+        RestaurantWithReviewDto(
             id = 3,
             name = "Äteritsiputeritsipuolilautatsibaari",
             cuisine = "Väärää ruokaa",
@@ -99,24 +99,24 @@ fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navCon
     val response = GetRestaurantResponseDto(
         id = selectedRestaurant.id,
         name = selectedRestaurant.name,
-        reviews = reviewsOfRestaurant
+        review = reviewsOfRestaurant
     )
     val _state = ReviewsState(
         restaurant = response
     )
 
-        ReviewsOfRestaurantScreen(
-            restaurant = selectedRestaurant,
-            state = _state,
-            navController = navController,
-            onNavigate = onNavigate
-        )
+    ReviewsOfRestaurantScreen(
+        restaurant = selectedRestaurant,
+        state = _state,
+        navController = navController,
+        onNavigate = onNavigate
+    )
 
 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewsDto, state: ReviewsState, navController: NavController, onNavigate: (Int) -> Unit) {
+fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewDto, state: ReviewsState, navController: NavController, onNavigate: (Int) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -164,9 +164,9 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                         .padding(paddingValues)
                 ) {
                     item {
-                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate)
+                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate, inReviews = true)
                     }
-                    items(state.restaurant?.reviews ?: emptyList()){ review ->
+                    items(state.restaurant?.review ?: emptyList()){ review ->
                         ReviewItem(review = review)
 
                     }
