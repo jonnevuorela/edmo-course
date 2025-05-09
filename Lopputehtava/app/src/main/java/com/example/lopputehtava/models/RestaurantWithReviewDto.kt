@@ -23,3 +23,16 @@ data class RestaurantReviewsState(
     val error: String? = null,
     val restaurantWithReview : List<RestaurantWithReviewDto> = emptyList(),
 )
+
+data class RestaurantState(
+    val loading: Boolean = false,
+    val error: String? = null,
+    val restaurant : RestaurantWithReviewDto? = null,
+)
+
+data class GetRestaurantDto(
+    val id: Int,
+    val name: String,
+
+    val restaurant: RestaurantWithReviewDto
+)

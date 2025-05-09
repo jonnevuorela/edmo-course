@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -45,8 +46,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("reviewsOfRestaurantScreen") { nav ->
+                            val vm = nav.SharedViewModel<RestaurantViewModel>(navController)
                             ReviewsOfRestaurantScreenRoot(
-                                id = 1,
+                                viewModel = vm,
                                 navController = navController,
                                 /** Koska reviews screenissä on käytössä sama composable, kuin
                                 etusivun korteilla. Saa myös tämä navControllerin, joka johtaa

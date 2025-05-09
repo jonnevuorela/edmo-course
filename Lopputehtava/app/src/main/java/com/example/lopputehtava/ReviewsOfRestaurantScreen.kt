@@ -31,97 +31,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.lopputehtava.models.GetRestaurantResponseDto
-import com.example.lopputehtava.models.RestaurantWithReviewDto
 import com.example.lopputehtava.models.ReviewDto
 import com.example.lopputehtava.models.ReviewsState
+import com.example.lopputehtava.vm.RestaurantViewModel
+
+import androidx.compose.runtime.getValue
+import com.example.lopputehtava.models.RestaurantState
 
 @Composable
-fun ReviewsOfRestaurantScreenRoot(modifier: Modifier = Modifier, id: Int, navController: NavController, onNavigate: (Int) -> Unit) {
-    val reviewsOfRestaurant = listOf(
-        ReviewDto(
-            id = 1,
-            userId = null,
-            value = 5,
-            description = "Ruoka oli hyvää ja sitä oli riittävästi",
-            dateRated = "2025-05-06 14:45:02"
-        ),
-        ReviewDto(
-            id = 2,
-            userId = null,
-            value = 1,
-            description = "En tykkää",
-            dateRated = "2025-05-05 14:45:02"
-        ),
-        ReviewDto(
-            id = 3,
-            userId = null,
-            value = 5,
-            description = "Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. Ruoka oli hyvää ja sitä oli riittävästi. ",
-            dateRated = "2025-05-07 14:45:02"
-    ),
-    )
+fun ReviewsOfRestaurantScreenRoot(
+    modifier: Modifier = Modifier,
+    viewModel: RestaurantViewModel,
+    navController: NavController,
+    onNavigate: (Int) -> Unit
+) {
 
-    val restaurantsWithReviews = listOf(
-        RestaurantWithReviewDto(
-            id = 1,
-            name = "Ravintola",
-            cuisine = "Ruokaa",
-            priceRange = "$$$",
-            address = "Katu 123, Tuntsa",
-            openStatus = "Aina auki",
-            rating = 5f,
-            reviewCount = 1000,
-        ),
-        RestaurantWithReviewDto(
-            id = 2,
-            name = "Toinen Ravintola",
-            cuisine = "Eri ruokaa",
-            priceRange = "$$",
-            address = "Kuja 777, Tulppio",
-            openStatus = "Suljetaan kohta",
-            rating = 4.5f,
-            reviewCount = 100,
-        ),
-        RestaurantWithReviewDto(
-            id = 3,
-            name = "Äteritsiputeritsipuolilautatsibaari",
-            cuisine = "Väärää ruokaa",
-            priceRange = "$",
-            address = "Polku 2, Värriö",
-            openStatus = "Suljettu pysyvästi",
-            rating = 1f,
-            reviewCount = 1,
-        )
-    )
-    val selectedRestaurant = restaurantsWithReviews.first { it.id == id }
-    val response = GetRestaurantResponseDto(
-        id = selectedRestaurant.id,
-        name = selectedRestaurant.name,
-        review = reviewsOfRestaurant
-    )
-    val _state = ReviewsState(
-        restaurant = response
-    )
 
+    val reviewsState by viewModel.reviewsState.collectAsStateWithLifecycle()
+    val restaurantState by viewModel.restaurantState.collectAsStateWithLifecycle()
     ReviewsOfRestaurantScreen(
-        restaurant = selectedRestaurant,
-        state = _state,
+        restaurantState = restaurantState,
+        reviewState = reviewsState,
         navController = navController,
         onNavigate = onNavigate
     )
 
 
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: RestaurantWithReviewDto, state: ReviewsState, navController: NavController, onNavigate: (Int) -> Unit) {
+fun ReviewsOfRestaurantScreen(
+    modifier: Modifier = Modifier,
+    restaurantState: RestaurantState,
+    reviewState: ReviewsState,
+    navController: NavController,
+    onNavigate: (Int) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = restaurant.name)
+                    Text(text = restaurantState.restaurant?.name ?: "Restaurant")
                 },
                 navigationIcon = {
                     IconButton(onClick= { navController.navigateUp() }) {
@@ -132,7 +85,7 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
         }
     ) { paddingValues ->
         when {
-            state.loading -> {
+            restaurantState.loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -142,7 +95,7 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                     CircularProgressIndicator()
                 }
             }
-            state.error != null -> {
+            restaurantState.error != null -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -150,7 +103,7 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                     contentAlignment = Alignment.Center
                 ) {
                     Column {
-                        Text(state.error)
+                        Text(restaurantState.error)
                         Button(onClick = {}) {
                             Text("Retry")
                         }
@@ -163,11 +116,18 @@ fun ReviewsOfRestaurantScreen(modifier: Modifier = Modifier, restaurant: Restaur
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    item {
-                        RestaurantItem(restaurant = restaurant, onNavigate = onNavigate, inReviews = true)
-                    }
-                    items(state.restaurant?.review ?: emptyList()){ review ->
-                        ReviewItem(review = review)
+                    if(restaurantState.restaurant!=null){
+
+                        item {
+                            RestaurantItem(restaurant = restaurantState.restaurant, onNavigate = onNavigate, inReviews = true)
+                        }
+                        items(reviewState.reviews){ review ->
+                            ReviewItem(review=review)
+                        }
+
+                    }else{
+                        // Ei varmaan parhaan käytännö mukainen
+                        navController.navigateUp()
 
                     }
                 }

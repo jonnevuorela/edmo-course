@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lopputehtava.DataApi
 import com.example.lopputehtava.models.RestaurantReviewsState
+import com.example.lopputehtava.models.RestaurantState
 import com.example.lopputehtava.models.ReviewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,16 +23,20 @@ class RestaurantViewModel @Inject constructor(
     private val _restaurantReviewState = MutableStateFlow(RestaurantReviewsState())
     val restaurantReviewsState = _restaurantReviewState.asStateFlow()
 
-    private val _restauranState = MutableStateFlow(ReviewsState())
-    val restaurantState = _restauranState.asStateFlow()
+    private val _restaurantState = MutableStateFlow(RestaurantState())
+    val restaurantState = _restaurantState.asStateFlow()
+
+    private val _reviewsState = MutableStateFlow(ReviewsState())
+    val reviewsState = _reviewsState.asStateFlow()
 
     init {
-        Log.d("tämä on testi", "init")
-        getRestarantReviews()
+        getRestarantsAndReviews()
     }
 
     fun setRestaurantId(restaurantId: Int) {
         savedState["restaurantId"] = restaurantId
+        getRestaurantReviews()
+        getRestaurant()
     }
 
     fun getRestaurant(){
@@ -39,27 +44,52 @@ class RestaurantViewModel @Inject constructor(
             try{
                 savedState.get<Int>("restaurantId")?.let{ restaurantId ->
 
-                val restaurantResponse = api.getRestaurant(restaurantId)
-                _restauranState.update { currentState ->
-                    currentState.copy(restaurant = restaurantResponse)
-                }
+                    val restaurant = api.getRestaurant(restaurantId)
+                    _restaurantState.update { currentState ->
+                        currentState.copy(restaurant = restaurant)
+                    }
 
-            } ?: _restauranState.update { currentState ->
-                currentState.copy(error = "Restaurant id is null")
-            } }
+                } ?: _restaurantState.update { currentState ->
+                    currentState.copy(error = "Restaurant id is null")
+                } }
             catch (e: Exception){
-                _restauranState.update { currentState ->
+                _restaurantState.update { currentState ->
                     currentState.copy(error = e.toString())
                 }
             }finally {
-                _restauranState.update { currentState ->
+                _restaurantState.update { currentState ->
                     currentState.copy(loading = false)
                 }
             }
         }
     }
 
-    fun getRestarantReviews(){
+    fun getRestaurantReviews(){
+        viewModelScope.launch {
+            try{
+                savedState.get<Int>("restaurantId")?.let{ restaurantId ->
+
+                val restaurantResponse = api.getRestaurantRatings(restaurantId)
+                _reviewsState.update { currentState ->
+                    currentState.copy(reviews = restaurantResponse)
+                }
+
+            } ?: _reviewsState.update { currentState ->
+                currentState.copy(error = "Restaurant id is null")
+            } }
+            catch (e: Exception){
+                _reviewsState.update { currentState ->
+                    currentState.copy(error = e.toString())
+                }
+            }finally {
+                _reviewsState.update { currentState ->
+                    currentState.copy(loading = false)
+                }
+            }
+        }
+    }
+
+    fun getRestarantsAndReviews(){
         viewModelScope.launch {
             try {
                 _restaurantReviewState.update { currentState ->
